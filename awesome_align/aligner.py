@@ -3,6 +3,7 @@
 # Modifications copyright (C) 2021 Jun Cao
 
 import itertools
+from math import exp
 import random
 from typing import List
 
