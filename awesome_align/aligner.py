@@ -3,6 +3,7 @@
 # Modifications copyright (C) 2021 Jun Cao
 
 import itertools
+from math import exp
 import random
 from typing import List
 
@@ -133,8 +134,18 @@ class AwesomeAlign(object):
             if not src_aligns_len or not trg_aligns_len:
                 score = 0
             else:
-		# calculate score by harmonic mean of both sides align rate (tokens aligned / total)
-                score = 2 / (len(src_token) / src_aligns_len + len(trg_token) / trg_aligns_len)
+                try:
+                    if len(src_token) > len(trg_token):
+                        len_rate = len(src_token) / len(trg_token)
+                    else:
+                        len_rate = len(trg_token) / len(src_token)
+                except ZeroDivisionError:
+                    len_rate = 10
+
+                penalty = exp(1 - len_rate)
+                # calculate score by harmonic mean of both sides align rate (tokens aligned / total)
+                score = penalty * 2 / (len(src_token) / src_aligns_len +
+                                       len(trg_token) / trg_aligns_len)
             scores.append(score)
         return scores
 
